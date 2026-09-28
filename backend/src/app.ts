@@ -1,9 +1,19 @@
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
-
 export const app = express();
-const PORT = process.env.PORT || 4001;
 
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
+        "https://url-shortener.tanmayshirbhayye.tech",
+    ],
+    credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(cookieParser());
