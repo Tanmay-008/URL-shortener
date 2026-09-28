@@ -1,0 +1,5 @@
+*.DS_Store
+./docker
+.env
+./helm-chart/k3s-apps-chart/Chart.lock
+./helm-chart/k3s-apps-chart/templates
