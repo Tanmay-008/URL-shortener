@@ -1,3 +1,4 @@
+import path from "path"
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import { defineConfig, loadEnv } from 'vite'
@@ -9,6 +10,11 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       port: env.PORT ? parseInt(env.PORT) : 5173,
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(import.meta.dirname, "./src"),
+      },
     },
     plugins: [
       react(),
