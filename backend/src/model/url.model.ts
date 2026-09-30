@@ -23,10 +23,12 @@ const shortUrlSchema = new mongoose.Schema({
     },
     shortUrlCode: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
-    expiresData: {
+    expiresAt: {
         type: Date,
+        expires: 0
     }
 });
 
