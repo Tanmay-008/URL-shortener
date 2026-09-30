@@ -9,7 +9,7 @@ export const createShortUrlController = asyncHandler(async (req: Request, res: R
         throw new ApiError(400, "URL is required");
     }
 
-    const response = await createShortUrlService(url, expirationTime);
-    res.status(201).json({ success: true, data: response });
+    const shortUrl = await createShortUrlService(url, expirationTime);
+    res.status(201).json({ success: true, data: shortUrl });
 });
 
