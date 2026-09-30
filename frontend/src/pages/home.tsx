@@ -111,7 +111,6 @@ export default function Home() {
               </Button>
             </form>
 
-            {/* Render Short URL Result Component */}
             {shortUrl && <ShortUrlCard shortUrl={shortUrl} />}
           </CardContent>
         </Card>
