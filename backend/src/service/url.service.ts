@@ -61,9 +61,6 @@ export const getOriginalUrlService = async (shortCode: any) => {
             throw new ApiError(410, "Short URL has expired");
         }
 
-        shortUrlEntry.clicks += 1;
-        await shortUrlEntry.save();
-
         logger.info(`Successfully retrieved and updated click count for short code: ${shortCode}`);
         return shortUrlEntry.longUrl;
     } catch (error) {
