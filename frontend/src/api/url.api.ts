@@ -29,7 +29,7 @@ export interface ApiResponse<T> {
  */
 export const createShortUrlApi = async (payload: CreateShortUrlPayload): Promise<ShortUrlData> => {
     try {
-        const response = await axiosAPI.post("/url/create-short-url", {
+        const response = await axiosAPI.post("/create-short-url", {
             url: payload.url,
             expirationTime: payload.expirationTime,
         });
