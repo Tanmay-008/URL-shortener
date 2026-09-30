@@ -17,3 +17,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+import { router } from './routes/routes';
+app.use("/api/v1/url", router);

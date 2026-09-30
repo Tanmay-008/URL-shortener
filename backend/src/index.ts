@@ -8,6 +8,7 @@ const logger = getChildLogger("PORT");
 import { dbConnection } from './db/dbConnection';
 dbConnection();
 
+
 const PORT = process.env.PORT || 4001;
 
 app.listen(PORT, () => {
