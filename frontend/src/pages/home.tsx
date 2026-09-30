@@ -1,25 +1,45 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Link, Copy, Check, ArrowRight } from 'lucide-react'
+import { ExpirySelector } from '@/components/ui/expiry-selector'
+import { Link, Copy, Check, ArrowRight, AlertCircle } from 'lucide-react'
 
 export default function Home() {
   const [url, setUrl] = useState('')
+  const [expirationTime, setExpirationTime] = useState(1)
   const [shortUrl, setShortUrl] = useState('')
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!url) return
 
     setLoading(true)
-    setTimeout(() => {
-      setShortUrl('https://shrt.it/' + Math.random().toString(36).substring(2, 8))
-      setLoading(false)
+    setError('')
+    setShortUrl('')
+
+    try {
+      const response = await axios.post('http://localhost:4000/api/v1/url/create-short-url', {
+        url,
+        expirationTime
+      })
+
+      if (response.data?.data?.shortUrl) {
+        setShortUrl(response.data.data.shortUrl)
+      } else {
+        setShortUrl('https://url-shortener.tanmayshirbhayye.tech/' + (response.data?.data?.shortUrlCode || ''))
+      }
       setCopied(false)
-    }, 1000)
+    } catch (err: any) {
+      console.error(err)
+      setError(err.response?.data?.message || 'Failed to generate short URL. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const copyToClipboard = () => {
@@ -57,7 +77,7 @@ export default function Home() {
             <CardDescription className="text-slate-400">Enter a valid URL to get a shortened link.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <Link className="w-5 h-5 text-slate-500" />
@@ -71,9 +91,23 @@ export default function Home() {
                   required
                 />
               </div>
+
+              {/* Expiry Selector Component */}
+              <ExpirySelector
+                value={expirationTime}
+                onChange={(days) => setExpirationTime(days)}
+              />
+
+              {error && (
+                <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-medium">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white shadow-lg shadow-cyan-500/20 transition-all duration-300"
+                className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-400 hover:to-violet-400 text-white shadow-lg shadow-cyan-500/20 transition-all duration-300 cursor-pointer"
                 disabled={loading}
               >
                 {loading ? (
@@ -104,7 +138,7 @@ export default function Home() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="shrink-0 border-slate-700 bg-slate-900 hover:bg-slate-800 hover:text-slate-200 text-slate-400"
+                    className="shrink-0 border-slate-700 bg-slate-900 hover:bg-slate-800 hover:text-slate-200 text-slate-400 cursor-pointer"
                     onClick={copyToClipboard}
                     title="Copy to clipboard"
                   >
