@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExpirySelector } from '@/components/ui/expiry-selector'
-import { Link, Copy, Check, ArrowRight, AlertCircle } from 'lucide-react'
+import { ShortUrlCard } from '@/components/ui/short-url-card'
+import { createShortUrlApi } from '@/api/url.api'
+import { Link, ArrowRight, AlertCircle } from 'lucide-react'
 
 export default function Home() {
   const [url, setUrl] = useState('')
   const [expirationTime, setExpirationTime] = useState(1)
   const [shortUrl, setShortUrl] = useState('')
-  const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,34 +23,22 @@ export default function Home() {
     setShortUrl('')
 
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/url/create-short-url', {
+      const data = await createShortUrlApi({
         url,
-        expirationTime
+        expirationTime,
       })
 
-      if (response.data?.data?.shortUrl) {
-        setShortUrl(response.data.data.shortUrl)
-      } else {
-        setShortUrl('https://url-shortener.tanmayshirbhayye.tech/' + (response.data?.data?.shortUrlCode || ''))
-      }
-      setCopied(false)
+      setShortUrl(data.shortUrl)
     } catch (err: any) {
       console.error(err)
-      setError(err.response?.data?.message || 'Failed to generate short URL. Please try again.')
+      setError(err.message || 'Failed to generate short URL. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shortUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[40%] -left-[20%] w-[70%] h-[70%] rounded-full bg-violet-600/20 blur-[120px]" />
         <div className="absolute -bottom-[40%] -right-[20%] w-[70%] h-[70%] rounded-full bg-cyan-600/20 blur-[120px]" />
@@ -92,7 +80,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Expiry Selector Component */}
               <ExpirySelector
                 value={expirationTime}
                 onChange={(days) => setExpirationTime(days)}
@@ -123,31 +110,10 @@ export default function Home() {
                 )}
               </Button>
             </form>
-          </CardContent>
 
-          {shortUrl && (
-            <div className="px-6 pb-6 animate-in slide-in-from-top-4 fade-in duration-300">
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
-                <p className="text-sm text-slate-400 mb-2 font-medium">Your shortened URL:</p>
-                <div className="flex items-center gap-2">
-                  <Input
-                    readOnly
-                    value={shortUrl}
-                    className="bg-slate-900 border-slate-700 text-cyan-400 font-medium font-mono"
-                  />
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 border-slate-700 bg-slate-900 hover:bg-slate-800 hover:text-slate-200 text-slate-400 cursor-pointer"
-                    onClick={copyToClipboard}
-                    title="Copy to clipboard"
-                  >
-                    {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
+            {/* Render Short URL Result Component */}
+            {shortUrl && <ShortUrlCard shortUrl={shortUrl} />}
+          </CardContent>
         </Card>
 
         <p className="text-center text-xs text-slate-500 mt-8">
