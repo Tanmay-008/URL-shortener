@@ -1,9 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { app } from "./app"
+const logger = getChildLogger("PORT");
+
+import { dbConnection } from './db/dbConnection';
+import { getChildLogger } from './utils/logger';
+dbConnection();
 
 const PORT = process.env.PORT || 4001;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    logger.info(`URL Shortener Server is running on port:${PORT}`);
 });
