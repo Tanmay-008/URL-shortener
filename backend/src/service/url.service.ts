@@ -15,13 +15,6 @@ export const createShortUrlService = async (url: string, expirationTimeInDays?: 
     }
 
     try {
-        let shortUrlEntry = await ShortUrl.findOne({ longUrl: url });
-
-        if (shortUrlEntry) {
-            logger.info(`Existing short URL found for: ${url}`);
-            return shortUrlEntry;
-        }
-
         const shortCode = generateShortCode();
 
         const baseUrl = "https://url-shortener.tanmayshirbhayye.tech";
@@ -30,17 +23,17 @@ export const createShortUrlService = async (url: string, expirationTimeInDays?: 
 
         logger.info(`Generated new short code: ${shortCode} for URL: ${url}`);
 
-        let expiresData: Date | undefined;
+        let expiresAt: Date | undefined;
         if (expirationTimeInDays) {
-            expiresData = new Date();
-            expiresData.setDate(expiresData.getDate() + Number(expirationTimeInDays));
+            expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + Number(expirationTimeInDays));
         }
 
-        shortUrlEntry = new ShortUrl({
+        const shortUrlEntry = new ShortUrl({
             longUrl: url,
             shortUrl,
             shortUrlCode: shortCode,
-            expiresData
+            expiresAt
         });
 
         await shortUrlEntry.save();
@@ -52,6 +45,7 @@ export const createShortUrlService = async (url: string, expirationTimeInDays?: 
         throw new ApiError(500, "Internal Server Error while creating short URL");
     }
 };
+
 
 export const getOriginalUrlService = async (shortCode: string) => {
     logger.info(`Attempting to retrieve original URL for short code: ${shortCode}`);
