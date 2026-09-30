@@ -31,7 +31,7 @@ jobs:
             - name: Build and Push Docker Image
               uses: docker/build-push-action@v6
               with:
-                context: ./user-service
+                context: ./backend
                 push: true
                 tags: |
                   ${{ secrets.DOCKERHUB_USERNAME }}/url-shortener-backend:1.0.${{ github.run_number }}
