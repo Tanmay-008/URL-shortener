@@ -47,8 +47,7 @@ export const createShortUrlService = async (url: string, expirationTimeInDays?: 
 };
 
 
-export const getOriginalUrlService = async (shortCode: string) => {
-    logger.info(`Attempting to retrieve original URL for short code: ${shortCode}`);
+export const getOriginalUrlService = async (shortCode: any) => {
     try {
         const shortUrlEntry = await ShortUrl.findOne({ shortUrlCode: shortCode });
 
