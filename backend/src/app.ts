@@ -19,4 +19,6 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 import { router } from './routes/routes';
+import { redirectToOriginalUrlController } from './controllers/url.controllers';
 app.use("/api/v1/url", router);
+app.get("/:shortCode", redirectToOriginalUrlController);
