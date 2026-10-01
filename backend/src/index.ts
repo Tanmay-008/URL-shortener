@@ -9,8 +9,9 @@ import { dbConnection } from './db/dbConnection';
 dbConnection();
 
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
+const HOST = '0.0.0.0';
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
     logger.info(`URL Shortener Server is running on port:${PORT}`);
 });
