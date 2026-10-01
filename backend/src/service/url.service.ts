@@ -17,7 +17,7 @@ export const createShortUrlService = async (url: string, expirationTimeInDays?: 
     try {
         const shortCode = generateShortCode();
 
-        const baseUrl = "https://url-shortener.tanmayshirbhayye.tech";
+        const baseUrl = "https://api-url-shortener.tanmayshirbhayye.tech";
 
         const shortUrl = `${baseUrl}/${shortCode}`;
 
