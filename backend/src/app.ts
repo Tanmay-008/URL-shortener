@@ -20,5 +20,10 @@ app.use(cookieParser());
 
 import { router } from './routes/routes';
 import { redirectToOriginalUrlController } from './controllers/url.controllers';
+import { errorHandler } from './middlewares/errorHandler';
+
 app.use("/api/v1/url", router);
 app.get("/:shortCode", redirectToOriginalUrlController);
+
+// Global Error Handling Middleware
+app.use(errorHandler);

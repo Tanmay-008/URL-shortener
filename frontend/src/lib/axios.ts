@@ -1,7 +1,15 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 
+const getBaseUrl = (): string => {
+    let url = import.meta.env.VITE_API_BASE_URL || "https://api-url-shortener.tanmayshirbhayye.tech/api/v1/url";
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = `https://${url}`;
+    }
+    return url;
+};
+
 const axiosConfig = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || "https://api-url-shortener.tanmayshirbhayye.tech/api/v1/url",
+    baseURL: getBaseUrl(),
     timeout: 15000,
     responseType: "json",
     withCredentials: true,

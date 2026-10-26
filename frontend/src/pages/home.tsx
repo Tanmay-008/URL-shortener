@@ -1,13 +1,16 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExpirySelector } from '@/components/ui/expiry-selector'
 import { ShortUrlCard } from '@/components/ui/short-url-card'
 import { createShortUrlApi } from '@/api/url.api'
-import { Link, ArrowRight, AlertCircle } from 'lucide-react'
+import { Link, ArrowRight, AlertCircle, Clock, X } from 'lucide-react'
 
 export default function Home() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const isRedirectedFromExpired = searchParams.get('redirected') === 'expired'
   const [url, setUrl] = useState('')
   const [expirationTime, setExpirationTime] = useState(1)
   const [shortUrl, setShortUrl] = useState('')
@@ -56,6 +59,23 @@ export default function Home() {
             Paste your long link and we'll shrink it for you.
           </p>
         </div>
+
+        {isRedirectedFromExpired && (
+          <div className="mb-4 p-3.5 bg-amber-500/10 border border-amber-500/25 rounded-2xl flex items-center justify-between gap-3 text-amber-300 text-xs backdrop-blur-md shadow-lg">
+            <div className="flex items-center gap-2.5">
+              <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>The link you requested has expired. You can generate a fresh link below!</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSearchParams({})}
+              className="text-amber-400 hover:text-amber-200 cursor-pointer p-1"
+              aria-label="Dismiss message"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-xl shadow-2xl relative overflow-hidden">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50"></div>

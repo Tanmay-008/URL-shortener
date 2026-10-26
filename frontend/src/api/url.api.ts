@@ -49,3 +49,38 @@ export const createShortUrlApi = async (payload: CreateShortUrlPayload): Promise
         throw new Error(errorMessage);
     }
 };
+
+export interface ResolveUrlData {
+    shortCode: string;
+    originalUrl: string;
+}
+
+/**
+ * API function to resolve short URL code
+ * Backend Route: GET /api/v1/url/resolve/:shortCode
+ */
+export const resolveShortUrlApi = async (shortCode: string): Promise<ResolveUrlData> => {
+    try {
+        const response = await axiosAPI.get(`/resolve/${shortCode}`);
+
+        if (response.data && response.data.success) {
+            return response.data.data;
+        }
+
+        throw new Error(response.data?.message || "Failed to resolve short URL");
+    } catch (error: any) {
+        const statusCode = error.response?.status || (error.response?.data?.statusCode);
+        const message =
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            error.message ||
+            "Unable to open link";
+
+        const customError: any = new Error(message);
+        customError.statusCode = statusCode;
+        customError.isExpired = statusCode === 410 || message.toLowerCase().includes("expired");
+        customError.isNotFound = statusCode === 404 || message.toLowerCase().includes("not found");
+        throw customError;
+    }
+};
+
